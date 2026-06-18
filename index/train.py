@@ -5,13 +5,14 @@ import japanize_matplotlib  # 日本語表示用
 from tensorflow.keras.callbacks import EarlyStopping
 import optuna
 import pandas as pd
+import config
 
 ALLOWED_EXTS = {".jpg", ".jpeg", ".png", ".bmp", ".gif"}
 
 # 【固定パラメータ】
 IMG_HEIGHT = 128 # 画像の高さ
 IMG_WIDTH = 128  # 画像の幅
-MAX_EPOCHS = 25  # 最大学習エポック数
+MAX_EPOCHS = 50  # 最大学習エポック数
 
 def collect_image_paths(dataset_dir):
     dataset_dir = Path(dataset_dir)
@@ -44,10 +45,10 @@ def create_dataset(file_paths, labels, batch_size):
 
 def objective(trial, file_paths, labels, num_classes):
     # ① 探してほしいパラメータの範囲を指定
-    batch_size = trial.suggest_categorical('batch_size', [4,8,16,32, 64, 128,256,512,1024])
-    hidden_units = trial.suggest_int('hidden_units', 32, 512, step=32)
-    dropout_rate = trial.suggest_float('dropout_rate', 0.1, 0.6)
-    learning_rate = trial.suggest_float('learning_rate', 1e-10, 1e-2, log=True)
+    batch_size = trial.suggest_categorical('batch_size', [2,4,8,16,32,64,128,256,512,1024])
+    hidden_units = trial.suggest_int('hidden_units', 32, 1024, step=32)
+    dropout_rate = trial.suggest_float('dropout_rate', 0.1, 0.9)
+    learning_rate = trial.suggest_float('learning_rate', 1e-10, 1e-1, log=True)
 
     train_data, test_data = create_dataset(file_paths, labels, batch_size)
 
@@ -76,7 +77,7 @@ def objective(trial, file_paths, labels, num_classes):
         validation_data=test_data,
         epochs=MAX_EPOCHS,
         callbacks=[early_stopping],
-        verbose=0  # 0にすると、裏で静かに学習してくれます
+        verbose=1  # 0にすると、裏で静かに学習してくれます
     )
 
     tf.keras.backend.clear_session()
@@ -90,18 +91,18 @@ def main():
     file_paths, labels, class_names = collect_image_paths(dataset_dir)
     num_classes = len(class_names)
 
-    print("--- Optunaによるパラメータ自動探索を開始します ---")
+    print("Optunaによるパラメータ自動探索を開始します。")
     study = optuna.create_study(direction='maximize')
     
-    study.optimize(lambda trial: objective(trial, file_paths, labels, num_classes), n_trials=10)
+    study.optimize(lambda trial: objective(trial, file_paths, labels, num_classes), n_trials=config.n_trials)
 
     df_results = study.trials_dataframe()
-    df_results.to_excel("optuna_results.xlsx", index=False)
-    print("\n最適化完了！全実験データは 'optuna_results.xlsx' に保存されました。")
+    df_results.to_excel("./index/optuna_results.xlsx", index=False)
+    print("\n全実験データは 'optuna_results.xlsx' に保存されました。")
 
-    print("\n見つけた最強のパラメータで最終モデルを学習します...")
+    print("\n見つけたパラメータで最終モデルを学習します")
     best_params = study.best_params
-    print("最強パラメータ:", best_params)
+    print("パラメータ:", best_params)
 
     # 最強パラメータを取り出す
     best_batch = best_params['batch_size']
@@ -138,8 +139,8 @@ def main():
         verbose=1
     )
 
-    final_model.save("my_best_model.keras")
-    print(" 最強のAIモデルを 'my_best_model.keras' として保存しました！")
+    final_model.save("./index/my_model.keras")
+    print(" AIモデルを 'my_model.keras' として保存しました")
 
     acc = history.history['accuracy']
     val_acc = history.history['val_accuracy']

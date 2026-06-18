@@ -123,17 +123,6 @@ def resolve_labels() -> list[str]:
             return class_dirs
     return list(config.labels)
 
-# def CNN():
-#     model = tf.keras.models.Sequential([
-#             tf.keras.Input(shape=(128, 128, 3)),
-#             tf.keras.layers.Conv2D(32, (3,3), activation = 'relu'),
-#             tf.keras.layers.MaxPooling2D(2,2),
-#             tf.keras.layers.Flatten(),
-#             tf.keras.layers.Dense(256, activation= "relu"),
-#             tf.keras.layers.Dense(4, activation= "softmax")
-#     ])
-#     return model
-
 def CNN_cluster_image(model, input_image, labels):
     resized_img = cv2.resize(input_image, (128, 128))
     normalized_img = resized_img.astype(np.float32) / 255.0
@@ -173,16 +162,7 @@ def main():
             
             if pose_result.pose_landmarks:
                 if face_landmarker is not None:
-                    face_landmarker.detect_for_video(mp_image, timestamp_ms)
-                # foot_results = {}
-                # for pose in pose_result.pose_landmarks:
-                #     foot_landmarks = pose[27:33]
-                #     for i, landmarks in enumerate(foot_landmarks):
-                #         index = 27 + i
-                #         foot_results[index] = landmarks
-                #         if 32 in foot_results:
-                #             print("右足先出たよ")
-                                            
+                    face_landmarker.detect_for_video(mp_image, timestamp_ms)                                            
                 remove_noize_image = remove_noize_from_image(frame, pose_result)
                 overlay_image = cv2.addWeighted(frame, 0.7, remove_noize_image, 1.0, 0)
                 cv2.imwrite(config.output_image_path, image_rgb)

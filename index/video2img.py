@@ -15,7 +15,7 @@ print(f"【確認2】読み込む動画のパス: {config.input_video_path}")
 cap = cv2.VideoCapture(config.input_video_path)
 
 if not cap.isOpened():
-    print("❌ エラー: 動画ファイルを開けませんでした。")
+    print("エラー: 動画ファイルを開けませんでした。")
     exit()
 
 count = 0
@@ -24,7 +24,7 @@ success_count = 0  #
 while True:
     ret, frame = cap.read()
     if not ret:
-        print("✅ 動画の読み込みが完了し、処理を終了しました。")
+        print("動画の読み込みが完了し、処理を終了しました。")
         break
     
     save_path = os.path.join(save_dir, f'frame_{count:04d}.jpg')

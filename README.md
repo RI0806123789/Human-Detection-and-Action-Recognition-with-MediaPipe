@@ -20,14 +20,15 @@ MediaPipe Pose Landmarker と TensorFlow を利用して、人間の姿勢推定
 ```text
 Human Detection and Action Recognition with MediaPipe/
 ├── README.md
-├── config.py
-├── mediapipe_image.py
-├── mediapipe_video.py
-├── realtime_mediapipe.py
-├── train.py
-├── video2img.py
-├── pose_landmarker_lite.task
-├── my_model.keras
+├── index/
+│   ├── config.py
+│   ├── mediapipe_image.py
+│   ├── mediapipe_video.py
+│   ├── realtime_mediapipe.py
+│   ├── train.py
+│   ├── video2img.py
+│   ├── pose_landmarker_lite.task
+│   └── my_model.keras
 ├── dataset/
 │   ├── Jump/
 │   ├── Run/
