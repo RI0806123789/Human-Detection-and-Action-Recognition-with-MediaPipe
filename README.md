@@ -57,22 +57,6 @@ Human Detection and Action Recognition with MediaPipe/
 
 ---
 
-## インストール
-
-### 仮想環境の作成
-
-```powershell
-python -m venv .venv
-.\.venv\Scripts\activate
-```
-
-### ライブラリのインストール
-
-```powershell
-pip install -r .\docker\requirements.txt
-```
-
----
 
 ## 1. データセット作成
 
