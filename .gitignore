@@ -1,0 +1,9 @@
+.venv/
+.vscode/
+dataset/
+memo/
+Sample/
+__pycache__/
+*.keras
+*.task
+*.mp4

@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  app:
+    build: 
+      context: . 
+      dockerfile: docker_env/Dockerfile 
+    volumes:
+      - .:/app
+    # カメラやGUIを使う場合はOSに応じた追加設定が必要
+    privileged: true
