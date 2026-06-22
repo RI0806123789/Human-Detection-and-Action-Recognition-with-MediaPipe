@@ -167,9 +167,9 @@ def main():
                 overlay_image = cv2.addWeighted(frame, 0.7, remove_noize_image, 1.0, 0)
                 
                 # 画像の書き出し（不要であればコメントアウトしてください）
-                # cv2.imwrite(config.output_image_path, image_rgb)
-                # cv2.imwrite(config.output_remove_noize_image_path, remove_noize_image)
-                # cv2.imwrite(config.output_overlay_image_path, overlay_image)
+                cv2.imwrite(config.output_image_path, image_rgb)
+                cv2.imwrite(config.output_remove_noize_image_path, remove_noize_image)
+                cv2.imwrite(config.output_overlay_image_path, overlay_image)
                 
                 cluster_cnn = CNN_cluster_image(cnn_model, image_rgb, labels)
                 label_count[cluster_cnn] += 1
