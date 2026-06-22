@@ -145,7 +145,7 @@ python realtime_mediapipe.py
 設定を変更できます。
 
 ```python
-input_video_path = "./Sample/golf.mp4"
+input_video_path = "./Sample/sample_video.mp4"
 
 labels = ["Jump", "Run", "Stand", "Walk"]
 ```
