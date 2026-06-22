@@ -165,13 +165,51 @@ def main():
                     face_landmarker.detect_for_video(mp_image, timestamp_ms)                                            
                 remove_noize_image = remove_noize_from_image(frame, pose_result)
                 overlay_image = cv2.addWeighted(frame, 0.7, remove_noize_image, 1.0, 0)
-                cv2.imwrite(config.output_image_path, image_rgb)
-                cv2.imwrite(config.output_remove_noize_image_path, remove_noize_image)
-                cv2.imwrite(config.output_overlay_image_path, overlay_image)
+                
+                # 画像の書き出し（不要であればコメントアウトしてください）
+                # cv2.imwrite(config.output_image_path, image_rgb)
+                # cv2.imwrite(config.output_remove_noize_image_path, remove_noize_image)
+                # cv2.imwrite(config.output_overlay_image_path, overlay_image)
+                
                 cluster_cnn = CNN_cluster_image(cnn_model, image_rgb, labels)
                 label_count[cluster_cnn] += 1
                 bar.write(f"フレーム: {frame_count} | 検出: {cluster_cnn}")
-                                
+                
+                display_text_result = f"Result: {cluster_cnn}"
+                display_text_frame = f"Frame: {frame_count}/{total_frames}"
+                
+                cv2.putText(
+                    overlay_image,
+                    display_text_result,
+                    (30, 50),                 # 画面左上に配置 (x=30, y=50)
+                    cv2.FONT_HERSHEY_SIMPLEX, # 標準的なフォント
+                    1.2,                      # フォントの大きさ
+                    (0, 255, 0),              # テキストの色 (今回は緑: B=0, G=255, R=0)
+                    2,                        # 線の太さ
+                    cv2.LINE_AA               # 文字の輪郭を滑らかにする設定
+                )
+                cv2.putText(
+                    overlay_image,
+                    display_text_frame,
+                    (30, 100),                # 画面左上に配置 (x=30, y=100)
+                    cv2.FONT_HERSHEY_SIMPLEX, # 標準的なフォント
+                    1.2,                      # フォントの大きさ
+                    (0, 255, 0),              # テキストの色 (今回は緑: B=0, G=255, R=0)
+                    2,                        # 線の太さ
+                    cv2.LINE_AA               # 文字の輪郭を滑らかにする設定
+                )
+                
+                cv2.imshow("Result Window", overlay_image)
+                
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    print("\n処理を中断します...")
+                    break
+                cv2.imshow("Result Window", overlay_image)
+                
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    print("\n処理を中断します...")
+                    break
+                
             else:
                 pass
         else:
@@ -182,6 +220,7 @@ def main():
     if face_landmarker is not None:
         face_landmarker.close()
     bar.close()
+    cv2.destroyAllWindows()
     
     print(f"総フレーム数：{total_frames}")
     print("各ラベルの出現回数")

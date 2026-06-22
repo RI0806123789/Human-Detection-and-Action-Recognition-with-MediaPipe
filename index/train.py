@@ -44,11 +44,10 @@ def create_dataset(file_paths, labels, batch_size):
     return train_data, test_data
 
 def objective(trial, file_paths, labels, num_classes):
-    # ① 探してほしいパラメータの範囲を指定
-    batch_size = trial.suggest_categorical('batch_size', [2,4,8,16,32,64,128,256,512,1024])
-    hidden_units = trial.suggest_int('hidden_units', 32, 1024, step=32)
-    dropout_rate = trial.suggest_float('dropout_rate', 0.1, 0.9)
-    learning_rate = trial.suggest_float('learning_rate', 1e-10, 1e-1, log=True)
+    batch_size = trial.suggest_categorical('batch_size', config.batch_sizes)
+    hidden_units = trial.suggest_int('hidden_units', config.hidden_units[0], config.hidden_units[1], step=config.hidden_units[2])
+    dropout_rate = trial.suggest_float('dropout_rate', config.dropout_rate[0], config.dropout_rate[1])
+    learning_rate = trial.suggest_float('learning_rate', config.learning_rate[0], config.learning_rate[1], log=True)
 
     train_data, test_data = create_dataset(file_paths, labels, batch_size)
 

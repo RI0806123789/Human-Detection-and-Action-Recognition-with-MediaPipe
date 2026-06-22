@@ -1,11 +1,12 @@
 .venv/
 .vscode/
 dataset/
-memo/
 Sample/
 __pycache__/
+*.ipynb
 *.keras
 *.task
 *.mp4
 *.xlsx
 *.jpg
+*.png
