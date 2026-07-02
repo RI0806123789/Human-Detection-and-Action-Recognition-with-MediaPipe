@@ -2,7 +2,7 @@
 
 MediaPipe Pose Landmarker と TensorFlow を利用して、人間の姿勢推定と行動分類を行う Python プロジェクトです。
 
-動画やWebカメラの映像から骨格情報を抽出し、CNNによって行動（Jump / Run / Stand / Walk など）を分類します。
+動画やWebカメラの映像から骨格情報を抽出し、CNNによって行動を分類します。
 
 ## 主な機能
 
@@ -20,7 +20,7 @@ MediaPipe Pose Landmarker と TensorFlow を利用して、人間の姿勢推定
 ```text
 Human Detection and Action Recognition with MediaPipe/
 ├── README.md
-├── index/
+├── Index/
 │   ├── config.py
 │   ├── mediapipe_image.py
 │   ├── mediapipe_video.py
@@ -29,14 +29,18 @@ Human Detection and Action Recognition with MediaPipe/
 │   ├── video2img.py
 │   ├── pose_landmarker_lite.task
 │   └── my_model.keras
-├── dataset/
+├── Dataset/
 │   ├── Jump/
 │   ├── Run/
 │   ├── Stand/
 │   └── Walk/
 ├── Sample/
 │   └── sample_video.mp4
-└── docker/
+├── Graph/
+│   ├── optuna_results.xlsx
+│   ├── precision_recall_f1.png
+│   └── training_accuracy_loss.png
+└── Docker/
     ├── Dockerfile
     ├── docker-compose.yml
     └── requirements.txt
@@ -57,7 +61,6 @@ Human Detection and Action Recognition with MediaPipe/
 - japanize_matplotlib
 
 ---
-
 
 ## 1. データセット作成
 
@@ -91,6 +94,8 @@ python train.py
 ```text
 my_model.keras
 optuna_results.xlsx
+precision_recall_f1.png
+training_accuracy_loss.png
 ```
 
 ---
@@ -136,8 +141,6 @@ Webカメラを利用してリアルタイムに姿勢推定を行います。
 python realtime_mediapipe.py
 ```
 
-
-
 ---
 
 ## config.py
@@ -147,7 +150,7 @@ python realtime_mediapipe.py
 ```python
 input_video_path = "./Sample/sample_video.mp4"
 
-labels = ["Jump", "Run", "Stand", "Walk"]
+labels = ["分類ラベル名1","分類ラベル名2",.....]
 ```
 
 設定可能項目
@@ -157,6 +160,11 @@ labels = ["Jump", "Run", "Stand", "Walk"]
 - output_image_path
 - output_remove_noize_image_path
 - output_overlay_image_path
+- n_trials
+- max_epochs
+- batch_sizes
+- dropout_rate
+- learning_rate
 - labels
 
 ---
@@ -196,3 +204,4 @@ mediapipe_video.py
 
 - MediaPipeのモデルファイル（pose_landmarker_lite.task）が必要です。
 - 日本語パス環境では、一時フォルダへコピーして実行する処理を実装しています。
+- labelの順番は、ディレクトリの順番と同じにしてください。

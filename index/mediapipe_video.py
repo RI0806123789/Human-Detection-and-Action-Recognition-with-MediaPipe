@@ -1,3 +1,4 @@
+import argparse
 import mediapipe as mp
 import numpy as np
 import shutil
@@ -123,6 +124,26 @@ def resolve_labels() -> list[str]:
             return class_dirs
     return list(config.labels)
 
+
+def resolve_input_video_path(video_path: str | Path | None = None) -> Path:
+    raw_candidate = Path(video_path) if video_path is not None else Path(config.input_video_path)
+    if raw_candidate.is_absolute():
+        return raw_candidate
+
+    script_dir = Path(__file__).resolve().parent
+    search_roots = (
+        Path.cwd(),
+        script_dir,
+        script_dir.parent,
+        Path.cwd().parent,
+    )
+    for root in search_roots:
+        candidate = (root / raw_candidate).resolve()
+        if candidate.exists():
+            return candidate
+
+    return (script_dir / raw_candidate).resolve()
+
 def CNN_cluster_image(model, input_image, labels):
     resized_img = cv2.resize(input_image, (128, 128))
     normalized_img = resized_img.astype(np.float32) / 255.0
@@ -131,11 +152,14 @@ def CNN_cluster_image(model, input_image, labels):
     class_index = np.argmax(predictions)
     return labels[class_index]
     
-def main():
+def main(video_path: str | Path | None = None):
     pose_landmarker, face_landmarker = run_mediapipe()
     # cnn_model = CNN()
     cnn_model = tf.keras.models.load_model(resolve_model_path())
-    cap, fps, total_frames = video_capture(config.input_video_path)
+    input_video_path = resolve_input_video_path(video_path)
+    if not input_video_path.exists():
+        raise FileNotFoundError(f"入力動画が見つかりません: {input_video_path}")
+    cap, fps, total_frames = video_capture(str(input_video_path))
     frame_count = 0
     bar = tqdm(total = total_frames)
 
@@ -165,11 +189,6 @@ def main():
                     face_landmarker.detect_for_video(mp_image, timestamp_ms)                                            
                 remove_noize_image = remove_noize_from_image(frame, pose_result)
                 overlay_image = cv2.addWeighted(frame, 0.7, remove_noize_image, 1.0, 0)
-                
-                # 画像の書き出し（不要であればコメントアウトしてください）
-                cv2.imwrite(config.output_image_path, image_rgb)
-                cv2.imwrite(config.output_remove_noize_image_path, remove_noize_image)
-                cv2.imwrite(config.output_overlay_image_path, overlay_image)
                 
                 cluster_cnn = CNN_cluster_image(cnn_model, image_rgb, labels)
                 label_count[cluster_cnn] += 1
@@ -227,4 +246,8 @@ def main():
     for label , count in label_count.items():
         print(f"{label}:{count}")
 
-main()
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("video_path", nargs="?", default=None, help="入力動画のパス")
+    args = parser.parse_args()
+    main(args.video_path)

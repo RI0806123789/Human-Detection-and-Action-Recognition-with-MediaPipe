@@ -5,7 +5,7 @@ import config
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-save_dir = os.path.join(current_dir, '..', 'dataset', 'Stand')
+save_dir = os.path.join(current_dir, '..', 'dataset', 'Sit')
 save_dir = os.path.normpath(save_dir)
 
 print(f"【確認1】画像の保存先パス: {save_dir}")
